@@ -8,6 +8,8 @@ app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// GET, POST, UPDATE, DELETE METHODS WITH A HARD CODE DATABASE
+
 const members = [
   {
     id: 1,
@@ -17,10 +19,6 @@ const members = [
     id: 2,
     name: "Thomas"
   },
-  {
-    id: 3,
-    name: "Zachary"
-  }
 ];
 
 app.get('/api/members', (req, res) => {
@@ -37,5 +35,16 @@ app.get('/api/members/:id', (req, res) => {
   res.json(sucess(members[(req.params.id) - 1].name))
 })
 
+
+app.post('/api/members/', (req, res) => {
+  const lastItem = members[members.length - 1];
+  const lastId = lastItem.id;
+  const member = {
+    id: lastId + 1,
+    name: req.body.name
+  }
+  members.push(member)
+  res.send(member)
+})
 
 app.listen(8080, () => console.log('Started on port 8080'));

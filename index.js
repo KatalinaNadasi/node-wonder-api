@@ -23,13 +23,10 @@ app.get('/api/employees', (req, res) => {
 })
 
 app.post('/api/employees', (req, res) => {
-  // récupération des données envoyées
   const formData = req.body;
 
-  // connexion à la base de données, et insertion de l'employé
   connection.query('INSERT INTO employee SET ?', formData, (err, results) => {
 
-    // renvoyer un message d'erreur
     if (err) {
       console.log(err, formData);
       res.status(500).send("Erreur lors de la sauvegarde d'un employé");
