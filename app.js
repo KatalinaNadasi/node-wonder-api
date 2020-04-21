@@ -32,18 +32,23 @@ app.get('/api/members', (req, res) => {
 })
 
 app.get('/api/members/:id', (req, res) => {
-  res.json(sucess(members[(req.params.id) - 1].name))
+  res.json(success(members[(req.params.id) - 1].name));
 })
 
-
 app.post('/api/members/', (req, res) => {
-  const lastItem = members[members.length - 1];
-  const lastId = lastItem.id;
+  // const lastItem = members[members.length - 1];
+  // const lastId = lastItem.id;
   const member = {
-    id: lastId + 1,
+    id: members.length + 1,
     name: req.body.name
   }
   members.push(member)
+  res.json(success(member))
+})
+
+app.put('/api/members/:id', (req, res) => {
+  const member = members.find(member => member.id === parseInt(req.params.id))
+  member.name = req.body.name
   res.send(member)
 })
 
