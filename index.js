@@ -11,7 +11,6 @@ app.use(bodyParser.urlencoded({
   extended: true
 }))
 
-
 app.get('/api/employees', (req, res) => {
   connection.query('SELECT * from employee', (err, results) => {
     if (err) {
@@ -35,6 +34,20 @@ app.post('/api/employees', (req, res) => {
     }
   });
 });
+
+app.put('/api/employees/:id', (req, res) => {
+  const idEmployee = req.params.id
+  const formData = req.body
+
+  connection.query('UPDATE employee SET ? WHERE id=?', [formData, idEmployee], err => {
+    if (err) {
+      console.log(err)
+      res.status(500).send("Erreur lors de la modification d'un employé")
+    } else {
+      res.sendStatus(200)
+    }
+  })
+})
 
 
 app.listen(port, err => {
