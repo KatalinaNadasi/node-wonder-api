@@ -49,6 +49,19 @@ app.put('/api/employees/:id', (req, res) => {
   })
 })
 
+app.delete('/api/employees/:id', (req, res) => {
+    const idEmployee = req.params.id
+
+    connection.query('DELETE FROM employee WHERE id=?', [idEmployee], err => {
+      if (err) {
+        console.log(err)
+        res.status(500).send("Erreur lors de la modification d'un employé")
+      } else {
+        res.sendStatus(200)
+      }
+    })
+})
+
 
 app.listen(port, err => {
   if(err) {

@@ -3,6 +3,7 @@ const morgan = require('morgan')
 const {success, error} = require('functions')
 const express = require('express')
 const app = express()
+const port = 8080
 
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }));
@@ -21,7 +22,20 @@ const members = [
   },
 ];
 
-app.get('/api/members', (req, res) => {
+const membersRouter = express.Router()
+
+const getAll = (req, res, next) => {
+  console.log("datas")
+  req.message="ceci est un message depuis le premier middleware"
+  next()
+}
+
+const getAllSuite = (req, res, next) => {
+  console.log(req.message)
+  next()
+}
+
+membersRouter.get('/', getAll, getAllSuite, (req, res) => {
   if (req.query.max != undefined && req.query.max > 0){
     res.json(success(members.slice(0, req.query.max)))
   } else if(req.query.max != undefined) {
@@ -29,27 +43,37 @@ app.get('/api/members', (req, res) => {
   } else {
     res.json(success(members))
   }
+  console.log('trois')
 })
 
-app.get('/api/members/:id', (req, res) => {
+membersRouter.get('/:id', (req, res) => {
   res.json(success(members[(req.params.id) - 1].name));
 })
 
-app.post('/api/members/', (req, res) => {
-  // const lastItem = members[members.length - 1];
-  // const lastId = lastItem.id;
+membersRouter.post('/', (req, res) => {
+  const lastItem = members[members.length - 1];
+  const lastId = lastItem.id;
   const member = {
-    id: members.length + 1,
+    id: lastId + 1,
     name: req.body.name
   }
   members.push(member)
   res.json(success(member))
 })
 
-app.put('/api/members/:id', (req, res) => {
+membersRouter.put('/:id', (req, res) => {
   const member = members.find(member => member.id === parseInt(req.params.id))
   member.name = req.body.name
   res.send(member)
 })
 
-app.listen(8080, () => console.log('Started on port 8080'));
+membersRouter.delete('/:id', (req,res) => {
+  const member = members.find(element => element.id === parseInt(req.params.id))
+  const index = members.indexOf(member)
+  members.splice(index, 1)
+  res.send(member)
+})
+
+app.use('/api/members/', membersRouter)
+
+app.listen(8080, () => console.log(`Started on port ${port}`));
